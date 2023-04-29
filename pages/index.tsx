@@ -1,113 +1,193 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
+import React, { useState, ChangeEvent, FormEvent, useEffect} from "react";
 import styles from '@/styles/Home.module.css'
+import Tasks from 'pages/tasks.tsx'
+import Input from 'pages/input.tsx'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
-  return (
+  const [newItem, setNewItem] = useState<string>("");  
+  const [todos, setTodos] = useState<string>([]);
+  const [editTodo, setEditTodo] = useState<string>([]);
+  const [filterTodo, setFilterTodo] = useState<string>([]);
+  const [updateQuery, setUpdateQuery] = useState<string>("");
+
+  
+  //Update the searchQuery everytime EditTodo got updated
+  useEffect(() => {
+    setUpdateQuery(editTodo.title);
+  }, [editTodo]);
+
+
+  //Update FilterTodo everytime newItem got updated and filter out all irrelevant word
+  useEffect(() => {
+      setFilterTodo(currentFilter =>
+      {
+        return todos.filter(todo => todo.title.toLowerCase().includes(newItem.toLowerCase()))
+      })
+  }, [newItem]);
+
+
+  //When first load the page pull the data from api
+  useEffect(() => 
+    async function fetchTodos() {
+      const res = await fetch("/api/todo");
+      const data = await res.json();
+      console.log(data)
+      setTodos(data); 
+    }, []) 
+
+
+  //When User Submit their Todo Task
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => 
+  {
+      event.preventDefault();
+      if (!newItem.trim()) {
+        alert("Tasks Cannot Be Empty");
+        return;
+      }
+
+      if (todos.some(todo => todo.title === newItem)) {
+        alert("Task Cannot Be Duplicate");
+        return;
+      }
+      const data = { title: newItem };
+      const res = await fetch('/api/todo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', 
+        },
+        body: JSON.stringify(data),
+      });
+      if (res.ok) {
+        const newTodo = await res.json();
+        setTodos((currentTodos) => [...currentTodos, newTodo]);
+        setNewItem('');
+      } else {
+        console.error('Failed to create todo:', res.status, await res.text());
+      }  
+  };
+
+  //When user update thier TodoList
+  const updateTodo = async (id:string) =>
+  {
+    const data = { title: updateQuery };
+    const res = await fetch(`/api/todo?id=${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json', 
+      },
+      body: JSON.stringify(data),
+    });
+    if (res.ok) {
+      setTodos(currentTodos =>
+        {
+          return currentTodos.map(todo => {
+            if(todo.id === editTodo.id){
+              return {...todo, title: updateQuery }
+            } 
+            return todo
+          })
+        })
+      setNewItem('');
+      setEditTodo({});
+    } else {
+      console.error('Failed to update todo:', res.status, await res.text());
+    }
+  }
+
+  //When clicked prevent the default refresh page and update the data 
+  const handleUpdate = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    updateTodo(editTodo.id)
+  };
+
+
+
+  //Update the input field everytime the user input text
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setNewItem(event.target.value);
+  };
+
+  //Update the input field everytime the user input edit 
+  const handleUpdateQuery = (event: ChangeEvent<HTMLInputElement>) => {
+    setUpdateQuery(event.target.value);
+};
+  //Update the checkbox when being checked and update the completed to true
+const handleCheckBox = async (id:string, completed:boolean) => {
+      const data = { completed: completed };
+      const res = await fetch(`/api/todo?id=${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json', 
+      },
+      body: JSON.stringify(data),
+      });
+      if (res.ok) {
+      setTodos(currentTodos =>
+        {
+          return currentTodos.map(todo => {
+            if(todo.id === id){
+              return {...todo, completed: completed }
+            } 
+            return todo
+          })
+      })
+    } else {
+      console.error('Failed to update todo:', res.status, await res.text());
+    }
+    }
+      
+  //Delete Todo and Update api
+  const deleteTodo = async (id:string) =>
+  {
+    const res = await fetch(`/api/todo?id=${id}`, {
+      method: "DELETE",
+    });
+    if (res.ok) {
+        setTodos(currentTodos => {
+        const newTodos = currentTodos.filter(todo => todo.id !== id);
+        return newTodos;
+      });
+    } else {  
+      console.error('Failed to create todo:', res.status, await res.text());
+    }
+  }
+    function StoreTodoIntoInput(id:string)
+    {
+          setEditTodo(currentEdit =>{
+            return currentEdit = todos.find(todo => todo.id === id)
+        });
+          setUpdateQuery(editTodo.title);
+    }
+
+    return (
     <>
       <Head>
-        <title>Create Next App</title>
+        <title>To do list</title>
         <meta name="description" content="Generated by create next app" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
+    />
       </Head>
-      <main className={`${styles.main} ${inter.className}`}>
-        <div className={styles.description}>
-          <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>pages/index.tsx</code>
-          </p>
-          <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By{' '}
-              <Image
-                src="/vercel.svg"
-                alt="Vercel Logo"
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
-              />
-            </a>
-          </div>
-        </div>
-
-        <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
-          />
-        </div>
-
-        <div className={styles.grid}>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
-        </div>
+       <main className={styles.main_container}>
+        <div className={styles.container}>
+            <h1>To do list</h1>
+         <Tasks newItem = {newItem} todos={todos} 
+         deleteTodo={deleteTodo} handleCheckBox = {handleCheckBox} 
+         StoreTodoIntoInput = {StoreTodoIntoInput} filterTodo = {filterTodo} />
+        <div className = {styles.emptyFilter}>
+          {filterTodo.length === 0 && <h4>No result. Create a new one instead!</h4>}
+        </div>  
+        <Input editTodo ={editTodo} handleChange = {handleChange} 
+              handleSubmit = {handleSubmit} newItem = {newItem} 
+              handleUpdate = {handleUpdate} updateQuery = {updateQuery}
+              handleUpdateQuery = {handleUpdateQuery}
+        />
+      </div>
       </main>
     </>
   )

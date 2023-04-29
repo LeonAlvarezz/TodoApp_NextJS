@@ -201,7 +201,112 @@
     z-index: 1;
   }
 }
+  .input_tasks
+  {
+    position: fixed;
+    bottom: 30px;
+    width: 100%;
+    gap: 10px; 
+  }
+  .input_tasks input
+  {
+    padding: 15px 35% 15px 1% ;
+    border-radius: 0;
+    border: none;
+  }
+  .input_tasks button
+  {
+    padding: 15px 15px;
+    border-radius: 0;
+    outline: none;
+    background-color: #517acd;
+    border: none;
+    cursor: pointer;
+  }
+  .input_tasks button:hover
+  {
+    background-color: #0546c8;
+  }
+  .main_container
+  {
+     height: 90vh;
+     display: flex;
+     justify-content: center;
+     font-family: Satoshi;
+  }
 
+  .container 
+  {
+    width: 50%;
+  }
+  .btn_delete
+  {
+    padding: 3% 10%;
+    border: none;
+    background-color: red;
+    cursor: pointer;
+  }
+  .btn_edit
+  {
+    padding: 3% 10%;
+    border: none;
+    background-color: green;
+    cursor: pointer;
+  }
+
+  .btn_edit:hover 
+  {
+    background-color: rgb(5, 66, 5);
+  }
+
+  .btn_delete:hover 
+  {
+    background-color: rgb(119, 3, 3);
+  }
+
+  .task_list_action
+  {
+    margin-top: 10px;
+    border: 1px solid #333;
+    width: 100%;
+    padding: 10px 0 10px 0;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .btn_group
+  {
+    width: 30%;
+    height: 100%;
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .task_label
+  {
+    padding-left: 10px;
+
+  }
+  .task_label input[type="checkbox"]:checked +  span
+  {
+      text-decoration: line-through;
+      opacity: 0.5;
+  } 
+  .task_label .task_name
+  {
+    margin-left: 10px;
+  }
+
+  .filterButton
+  {
+    padding: 1% 2%;
+    margin-left: 15px;
+  }
+
+  .emptyFilter
+  {
+    margin-top: 50px;
+  }
 /* Tablet and Smaller Desktop */
 @media (min-width: 701px) and (max-width: 1120px) {
   .grid {
