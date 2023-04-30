@@ -210,7 +210,8 @@
   }
   .input_tasks input
   {
-    padding: 15px 35% 15px 1% ;
+    width: 50%;
+    padding: 15px 1%;
     border-radius: 0;
     border: none;
   }

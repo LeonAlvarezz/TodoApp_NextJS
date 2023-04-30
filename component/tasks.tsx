@@ -3,7 +3,23 @@ import React, { useState, ChangeEvent, FormEvent} from "react";
 import styles from '@/styles/Home.module.css'
 
 
-export default function Tasks({newItem, todos, handleCheckBox, deleteTodo, StoreTodoIntoInput, filterTodo}) {
+type Todo = {
+  id: string;
+  title: string;
+  completed?: boolean;
+}
+
+
+type Props = {
+  todos: Todo[];
+  newItem: string;
+  handleCheckBox: (id:string, completed:boolean) => void;
+  deleteTodo: (id:string) => void;
+  StoreTodoIntoInput: (id:string) => void;
+  filterTodo: Todo[];
+}
+
+export default function Tasks({todos, newItem, handleCheckBox, deleteTodo, StoreTodoIntoInput, filterTodo}: Props) {
   const renderTask = newItem === '' ? todos : filterTodo;
   return (
     <>

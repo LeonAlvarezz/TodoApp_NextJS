@@ -1,15 +1,14 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import {getAllTodo} from "../index.tsx"
 import { v4 as uuidv4 } from 'uuid';
 
 type Todo = {
-  id: "string",
-  title: "string",
-  completed: "false"
+  id: string,
+  title: string,
+  completed: boolean
 }
 let todos: Todo[] = [];
-export default async function handler(req: NextApiRequest,  res: NextApiResponse<Data>) 
+export default async function handler(req: NextApiRequest,  res: NextApiResponse<Todo | Todo[] | {message:string}>) 
 {
   const { method, body, query } = req;
 
@@ -19,18 +18,15 @@ export default async function handler(req: NextApiRequest,  res: NextApiResponse
       break;
 
     case "POST":
-      const newTodo: Todo = {
+      let newTodo: Todo = {
         id: uuidv4(),
-        title: body.title,
+        title: String(body.title),
         completed: false
       };
+
+
       todos.push(newTodo);
       res.status(201).json(newTodo);
-      break;
-      todos = todos.map((todo) =>
-        todo.id === updatedTodo.id ? updatedTodo : todo
-      );
-      res.status(200).json(updatedTodo);
       break;
 
       case "PUT":
@@ -49,7 +45,7 @@ export default async function handler(req: NextApiRequest,  res: NextApiResponse
       res.status(200).json(updatedTodo);
       break;
     case "DELETE":
-      const deletedTodo: Todo = todos.filter((todo) => todo.id === query.id);
+      const deletedTodo: Todo[] = todos.filter((todo) => todo.id !== query.id);
       todos = deletedTodo;
       res.status(200).json(deletedTodo);
       break;
