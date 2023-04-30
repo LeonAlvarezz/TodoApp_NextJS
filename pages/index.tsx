@@ -1,12 +1,15 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import { Inter } from 'next/font/google'
+import { Nunito_Sans } from 'next/font/google'
 import React, { useState, ChangeEvent, FormEvent, useEffect} from "react";
 import styles from '@/styles/Home.module.css'
 import Tasks from '../component/tasks.tsx'
 import Input from '../component/input.tsx'
 
-const inter = Inter({ subsets: ['latin'] })
+const nunitoSans = Nunito_Sans({
+  weight: '400',
+  subsets: ['latin'],
+})
 
 type EditTodo = {
   id?: string;
@@ -129,7 +132,6 @@ export default function Home() {
       }
     };
 
-
   //Update the input field everytime the user input text
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         setNewItem(event.target.value);
@@ -195,7 +197,7 @@ const handleCheckBox = async (id:string, completed:boolean) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-       <main className={styles.main_container}>
+       <main className={`${styles.main_container} ${nunitoSans.className}`} >
         <div className={styles.container}>
             <h1>To do list</h1>
          <Tasks newItem = {newItem} todos={todos} 
