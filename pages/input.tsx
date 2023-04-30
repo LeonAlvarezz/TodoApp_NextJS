@@ -3,7 +3,23 @@ import React, { useState, ChangeEvent, FormEvent} from "react";
 import styles from '@/styles/Home.module.css'
 
 
-export default function Input({handleUpdateQuery, updateQuery, editTodo, handleChange, handleSubmit, newItem, handleUpdate}) {
+type Todo = {
+  title: string;
+  id: string;
+  completed?: boolean;
+}
+
+type Props = {
+  handleUpdateQuery: () => void;
+  updateQuery: string;
+  editTodo: Todo[];
+  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  newItem: string;
+  handleUpdate: (event: React.FormEvent<HTMLFormElement>) => void;
+}
+
+export default function Input({handleUpdateQuery, updateQuery, editTodo, handleChange, handleSubmit, newItem, handleUpdate}: Props) {
 
   return (
     <> 
