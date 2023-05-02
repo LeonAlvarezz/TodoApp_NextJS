@@ -47,6 +47,20 @@ export default function Home() {
   const [updateQuery, setUpdateQuery] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const fetchTodos = async () => {
+    const querySnapshot = await getDocs(collection(db, 'todos'));
+    const todos = querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        title: data.title,
+        description: data.description,
+        completed: data.completed,
+      };
+    });
+    setTodos(todos);
+  };
+
   //Update the searchQuery everytime EditTodo got updated
   useEffect(() => {
     setUpdateQuery(editTodo.title || '');
@@ -60,22 +74,10 @@ export default function Home() {
       );
     });
   }, [newItem]);
+  
 
   //When first load the page pull the data from api
   useEffect(() => {
-    const fetchTodos = async () => {
-      const querySnapshot = await getDocs(collection(db, 'todos'));
-      const todos = querySnapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          title: data.title,
-          description: data.description,
-          completed: data.completed,
-        };
-      });
-      setTodos(todos);
-    };
     fetchTodos();
   }, [db]);
 
@@ -103,6 +105,7 @@ export default function Home() {
       console.log(err);
     } finally
     {
+      fetchTodos();
       setIsLoading(false)
       setNewItem('');
     }
@@ -128,14 +131,15 @@ export default function Home() {
         console.log(error)
       } finally
       {
-        setTodos((currentTodos) => {
-          return currentTodos.map((todo) => {
-            if (todo.id === editTodo.id) {
-              return { ...todo, title: updateQuery };
-            }
-            return todo;
-          })
-          });
+        // setTodos((currentTodos) => {
+        //   return currentTodos.map((todo) => {
+        //     if (todo.id === editTodo.id) {
+        //       return { ...todo, title: updateQuery };
+        //     }
+        //     return todo;
+        //   })
+        //   });
+          fetchTodos();
           setNewItem('');
           setEditTodo({});
           setIsLoading(false);
@@ -180,8 +184,6 @@ export default function Home() {
     setIsLoading(true)
     try {
       deleteTodoInDB(id);
- 
-      
     } catch (err) {
       console.log(err);
     } finally
