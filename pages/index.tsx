@@ -6,7 +6,7 @@ import styles from '@/styles/Home.module.css';
 import Tasks from '../component/tasks';
 import Input from '../component/input';
 import firestore from '../component/input';
-import { db } from '../firebase/firebase';
+import { db } from '../util/config';
 import { v4 as uuid } from 'uuid';
 import {addTodoInDB, updateTodoInDB, deleteTodoInDB, updateCheckBoxInDB} from "./api/database"
 
@@ -77,7 +77,7 @@ export default function Home() {
       setTodos(todos);
     };
     fetchTodos();
-  }, [todos]);
+  }, [db]);
 
   //When User Submit their Todo Task
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
