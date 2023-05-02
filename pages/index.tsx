@@ -79,7 +79,7 @@ export default function Home() {
   //When first load the page pull the data from api
   useEffect(() => {
     fetchTodos();
-  }, [db]);
+  }, []);
 
   //When User Submit their Todo Task
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
