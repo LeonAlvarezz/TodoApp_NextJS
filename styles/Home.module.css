@@ -206,7 +206,22 @@
     position: fixed;
     bottom: 30px;
     width: 100%;
-    gap: 10px; 
+    display: flex;
+  }
+  .sort
+  {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: baseline;
+  }
+
+  .sort select
+  {
+    width: 20%;
+    height: 30px;
+    background-color: #517acd;
+    border: none;
   }
   .input_tasks input
   {
@@ -287,7 +302,8 @@
     padding-left: 10px;
 
   }
-  .task_label input[type="checkbox"]:checked +  span
+  .task_label input[type="checkbox"]:checked +  span,
+  .task_label input[type="checkbox"]:checked +  span + p
   {
       text-decoration: line-through;
       opacity: 0.5;
@@ -295,6 +311,12 @@
   .task_label .task_name
   {
     margin-left: 10px;
+  }
+
+  .task_label .task_date
+  {
+    font-size: .7rem;
+    color: rgb(179, 179, 179);
   }
 
   .filterButton
@@ -307,6 +329,11 @@
   {
     margin-top: 50px;
   }
+
+  .react-datepicker__input-container input {
+    width: 30%;
+ }
+
 /* Tablet and Smaller Desktop */
 @media (min-width: 701px) and (max-width: 1120px) {
   .grid {
